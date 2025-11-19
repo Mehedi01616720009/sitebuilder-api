@@ -13,7 +13,7 @@ export interface IAdmin {
     phone: string;
     role: TAdminRole;
     status: 'Active' | 'Deactive' | 'Blocked';
-    image?: string;
+    profileImage?: string;
     isDeleted: boolean;
     createdAt: Date;
     updatedAt: Date;

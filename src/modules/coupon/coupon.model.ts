@@ -16,6 +16,7 @@ export const Coupon = `
         "discountCurrency" VARCHAR(10) NOT NULL CHECK ("discountCurrency" IN ('BDT', 'USD', 'EUR')),
         "usageGlobalLimit" INT NOT NULL DEFAULT 0,
         "usageUserLimit" INT NOT NULL DEFAULT 0,
+        "status" VARCHAR(20) NOT NULL CHECK ("status" IN ('Active', 'Inactive')) DEFAULT 'Active',
         "issuedAt" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
         "expiredAt" TIMESTAMP NOT NULL,
         "createdBy" UUID NOT NULL REFERENCES "Admins" ("id") ON DELETE CASCADE,
@@ -26,6 +27,7 @@ export const Coupon = `
 `;
 
 export const CouponIndexes = `
+    CREATE INDEX IF NOT EXISTS idx_coupons_status ON "Coupons" ("status");
     CREATE INDEX IF NOT EXISTS idx_coupons_isDeleted ON "Coupons" ("isDeleted");
     CREATE INDEX IF NOT EXISTS idx_coupons_createdAt ON "Coupons" ("createdAt");
 `;

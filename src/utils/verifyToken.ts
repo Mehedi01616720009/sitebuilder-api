@@ -5,7 +5,7 @@ const verifyToken = (token: string, secret: Secret): Promise<JwtPayload> => {
     return new Promise((resolve, reject) => {
         jwt.verify(token, secret, function (err, decoded) {
             if (err) {
-                reject(new AppError(402, 'You are not authorized'));
+                reject(new AppError(401, 'You are not authorized'));
             } else {
                 resolve(decoded as JwtPayload);
             }

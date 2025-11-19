@@ -3,9 +3,9 @@ import catchAsync from '../utils/catchAsync';
 import AppError from '../errors/AppError';
 import jwt, { JwtPayload } from 'jsonwebtoken';
 import config from '../config';
-import { TRole } from '../@types/role';
+import { ROLES } from '../constant/role';
 
-const auth = (...requiredRole: TRole[]) => {
+const SuperAuth = () => {
     return catchAsync(
         async (req: Request, res: Response, next: NextFunction) => {
             const { token } = req.cookies;
@@ -26,7 +26,7 @@ const auth = (...requiredRole: TRole[]) => {
                     }
 
                     const decodedRole = (decoded as JwtPayload).role;
-                    if (requiredRole && !requiredRole.includes(decodedRole)) {
+                    if (decodedRole !== ROLES.SuperAdmin) {
                         throw new AppError(401, 'You are not authorized');
                     }
 
@@ -39,4 +39,4 @@ const auth = (...requiredRole: TRole[]) => {
     );
 };
 
-export default auth;
+export default SuperAuth;

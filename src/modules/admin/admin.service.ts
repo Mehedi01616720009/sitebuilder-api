@@ -11,7 +11,7 @@ const createAdminIntoDB = async (payload: IAdmin) => {
         name: payload.name.trim(),
         phone: payload.phone.trim(),
         role: payload.role.trim(),
-        image: payload?.image?.trim() || null,
+        profileImage: payload?.profileImage?.trim() || null,
     };
 
     const QueryGetAdmin = 'SELECT "id" FROM "Admins" WHERE "email" = $1';
@@ -22,13 +22,13 @@ const createAdminIntoDB = async (payload: IAdmin) => {
     }
 
     const MutationCreateAdmin =
-        'INSERT INTO "Admins" ("email", "name", "phone", "role", "image") VALUES ($1, $2, $3, $4, $5) RETURNING *';
+        'INSERT INTO "Admins" ("email", "name", "phone", "role", "profileImage") VALUES ($1, $2, $3, $4, $5) RETURNING *';
     const ValuesCreateAdmin = [
         createAdminData.email,
         createAdminData.name,
         createAdminData.phone,
         createAdminData.role,
-        createAdminData.image,
+        createAdminData.profileImage,
     ];
     const Result = await Query(MutationCreateAdmin, ValuesCreateAdmin);
     return Result.rows[0];
@@ -38,7 +38,7 @@ const getAdminsFromDB = async (query: Record<string, unknown>) => {
     const { page, limit, skip } = getPaginate(query);
 
     const QueryGetAdmins =
-        'SELECT "id", "email", "name", "phone", "role", "status", "image", "isDeleted" FROM "Admins" WHERE "role" != $1 ORDER BY "createdAt" DESC LIMIT $2 OFFSET $3';
+        'SELECT "id", "email", "name", "phone", "role", "status", "profileImage", "isDeleted" FROM "Admins" WHERE "role" != $1 ORDER BY "createdAt" DESC LIMIT $2 OFFSET $3';
     const ValuesGetAdmins = [ROLES.SuperAdmin, limit, skip];
 
     const CountQuery = 'SELECT COUNT("id") FROM "Admins"';
@@ -68,7 +68,7 @@ const getAdminFromDB = async (id: string) => {
 
 const updateAdminIntoDB = async (id: string, payload: Partial<IAdmin>) => {
     const QueryGetAdmin =
-        'SELECT "name", "phone", "role", "status", "image" FROM "Admins" WHERE "id" = $1 AND "role" != $2';
+        'SELECT "name", "phone", "role", "status", "profileImage" FROM "Admins" WHERE "id" = $1 AND "role" != $2';
     const ValuesGetAdmin = [id, ROLES.SuperAdmin];
     const GetAdmin = await Query(QueryGetAdmin, ValuesGetAdmin);
     if (Number(GetAdmin?.rowCount) === 0) {
@@ -81,17 +81,17 @@ const updateAdminIntoDB = async (id: string, payload: Partial<IAdmin>) => {
         phone: payload?.phone?.trim() || Admin.phone,
         role: payload?.role?.trim() || Admin.role,
         status: payload?.status?.trim() || Admin.status,
-        image: payload?.image?.trim() || Admin.image || null,
+        profileImage: payload?.profileImage?.trim() || Admin.image || null,
     };
 
     const MutationUpdateAdmin =
-        'UPDATE "Admins" SET "name" = $1, "phone" = $2, "role" = $3, "status" = $4, "image" = $5 WHERE "id" = $6 RETURNING *';
+        'UPDATE "Admins" SET "name" = $1, "phone" = $2, "role" = $3, "status" = $4, "profileImage" = $5 WHERE "id" = $6 RETURNING *';
     const ValuesUpdateAdmin = [
         updateAdminData.name,
         updateAdminData.phone,
         updateAdminData.role,
         updateAdminData.status,
-        updateAdminData.image,
+        updateAdminData.profileImage,
         id,
     ];
     const Result = await Query(MutationUpdateAdmin, ValuesUpdateAdmin);
@@ -103,7 +103,7 @@ const updateAdminSelfIntoDB = async (
     payload: Partial<IAdmin>,
 ) => {
     const QueryGetAdmin =
-        'SELECT "name", "phone", "role", "status", "image" FROM "Admins" WHERE "id" = $1';
+        'SELECT "name", "phone", "role", "status", "profileImage" FROM "Admins" WHERE "id" = $1';
     const ValuesGetAdmin = [userPayload.id];
     const GetAdmin = await Query(QueryGetAdmin, ValuesGetAdmin);
     if (Number(GetAdmin?.rowCount) === 0) {
@@ -116,7 +116,7 @@ const updateAdminSelfIntoDB = async (
         phone: payload?.phone?.trim() || Admin.phone,
         role: payload?.role?.trim() || Admin.role,
         status: payload?.status?.trim() || Admin.status,
-        image: payload?.image?.trim() || Admin.image || null,
+        profileImage: payload?.profileImage?.trim() || Admin.image || null,
     };
 
     const MutationUpdateAdmin =
@@ -126,7 +126,7 @@ const updateAdminSelfIntoDB = async (
         updateAdminData.phone,
         updateAdminData.role,
         updateAdminData.status,
-        updateAdminData.image,
+        updateAdminData.profileImage,
         userPayload.id,
     ];
     const Result = await Query(MutationUpdateAdmin, ValuesUpdateAdmin);
