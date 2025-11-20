@@ -18,10 +18,17 @@ export const DBConnect = async () => {
     try {
         const client = await pool.connect();
         client.release();
-        return true;
+        return {
+            connected: true,
+            message: 'Connected',
+        };
     } catch (err) {
-        console.error('PostgreSQL connection failed: ', err);
-        throw err;
+        console.error('❌ PostgreSQL connection failed:', err);
+        return {
+            connected: false,
+            message: 'Connection Failed',
+            error: err instanceof Error ? err.message : String(err),
+        };
     }
 };
 

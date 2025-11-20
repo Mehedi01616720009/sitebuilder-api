@@ -4,6 +4,12 @@ import app from './app';
 import { DBConnect, Models } from '../DB/Database';
 import SeedSuperAdmin from '../DB/SeedSuperAdmin';
 import SeedRole from '../DB/SeedRole';
+import {
+    serverFailedResponse,
+    serverSuccessResponse,
+    serverUncaughtExceptionResponse,
+    serverUnhandledRejectionResponse,
+} from '../constant/server.response';
 
 // server initialization
 let server: Server;
@@ -11,28 +17,18 @@ let server: Server;
 async function main() {
     try {
         // database connection and table initialize
-        await DBConnect();
+        const dbStatus = await DBConnect();
         await Models();
         await SeedRole();
         await SeedSuperAdmin();
 
         // server initial port listener
         server = app.listen(config.server.port, () => {
-            console.log(`
-            -----------------------------------------------------
-            🚀 Server Started Successfully
-            -----------------------------------------------------
-            🧩 Service       : ${config.server.appName}
-            🌐 Environment    : ${config.server.nodeEnv}
-            🏷️ Version       : ${config.server.version}
-            📡 Port          : ${config.server.port}
-            🔗 Base URL      : ${config.server.baseURL}
-            🗄️ Database      : Connected
-            ⏰ Started At    : ${new Date().toISOString()}
-            -----------------------------------------------------
-            `);
+            serverSuccessResponse(dbStatus);
         });
     } catch (err: unknown) {
+        serverFailedResponse();
+
         if (err instanceof Error) {
             console.log({
                 status: 500,
@@ -42,7 +38,10 @@ async function main() {
                     path: '/',
                     message: err.message,
                 },
-                stack: err.stack,
+                stack:
+                    config.server.nodeEnv === 'development'
+                        ? err.stack
+                        : undefined,
             });
         } else {
             console.log({
@@ -61,8 +60,8 @@ async function main() {
 main();
 
 // server unhandled rejection listener
-process.on('unhandledRejection', () => {
-    console.log({ message: '--| Unhandled Rejection Detected |--' });
+process.on('unhandledRejection', reason => {
+    serverUnhandledRejectionResponse(reason);
 
     if (server) {
         server.close(() => {
@@ -73,7 +72,7 @@ process.on('unhandledRejection', () => {
 });
 
 // server uncaught exception listener
-process.on('uncaughtException', () => {
-    console.log({ message: '--| Uncaught Exception Detected |--' });
+process.on('uncaughtException', err => {
+    serverUncaughtExceptionResponse(err);
     process.exit(1);
 });
