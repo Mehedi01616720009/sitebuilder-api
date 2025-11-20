@@ -22,7 +22,7 @@ const SeedSuperAdmin = async () => {
     const GetAdmins = await Query(QueryGetAdmins, ValuesGetAdmins);
     if (Number(GetAdmins?.rowCount) === 0) {
         const MutationCreateAdminOne =
-            'INSERT INTO "Admins" ("email", "name", "phone", "role", "image") VALUES ($1, $2, $3, $4, $5) RETURNING *';
+            'INSERT INTO "Admins" ("email", "name", "phone", "role", "profileImage") VALUES ($1, $2, $3, $4, $5) RETURNING *';
         const ValuesCreateAdminOne = [
             superAdmins[0].email,
             superAdmins[0].name,
@@ -31,7 +31,7 @@ const SeedSuperAdmin = async () => {
             null,
         ];
         const MutationCreateAdminTwo =
-            'INSERT INTO "Admins" ("email", "name", "phone", "role", "image") VALUES ($1, $2, $3, $4, $5) RETURNING *';
+            'INSERT INTO "Admins" ("email", "name", "phone", "role", "profileImage") VALUES ($1, $2, $3, $4, $5) RETURNING *';
         const ValuesCreateAdminTwo = [
             superAdmins[1].email,
             superAdmins[1].name,

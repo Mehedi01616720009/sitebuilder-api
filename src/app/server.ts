@@ -3,6 +3,7 @@ import config from '../config';
 import app from './app';
 import { DBConnect, Models } from '../DB/Database';
 import SeedSuperAdmin from '../DB/SeedSuperAdmin';
+import SeedRole from '../DB/SeedRole';
 
 // server initialization
 let server: Server;
@@ -12,6 +13,7 @@ async function main() {
         // database connection and table initialize
         await DBConnect();
         await Models();
+        await SeedRole();
         await SeedSuperAdmin();
 
         // server initial port listener

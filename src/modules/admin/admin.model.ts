@@ -28,6 +28,7 @@ export const Admin = `
 export const AdminIndexes = `
     CREATE INDEX IF NOT EXISTS idx_admins_isVerified ON "Admins" ("isVerified");
     CREATE INDEX IF NOT EXISTS idx_admins_phone ON "Admins" ("phone");
+    CREATE INDEX IF NOT EXISTS idx_admins_role ON "Admins" ("role");
     CREATE INDEX IF NOT EXISTS idx_admins_status ON "Admins" ("status");
     CREATE INDEX IF NOT EXISTS idx_admins_isDeleted ON "Admins" ("isDeleted");
     CREATE INDEX IF NOT EXISTS idx_admins_createdAt ON "Admins" ("createdAt");

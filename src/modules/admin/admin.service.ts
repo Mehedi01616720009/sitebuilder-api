@@ -68,67 +68,102 @@ const getAdminFromDB = async (id: string) => {
 
 const updateAdminIntoDB = async (id: string, payload: Partial<IAdmin>) => {
     const QueryGetAdmin =
-        'SELECT "name", "phone", "role", "status", "profileImage" FROM "Admins" WHERE "id" = $1 AND "role" != $2';
+        'SELECT "id" FROM "Admins" WHERE "id" = $1 AND "role" != $2';
     const ValuesGetAdmin = [id, ROLES.SuperAdmin];
     const GetAdmin = await Query(QueryGetAdmin, ValuesGetAdmin);
     if (Number(GetAdmin?.rowCount) === 0) {
         throw new AppError(404, 'No admin found');
     }
-    const Admin = GetAdmin.rows[0];
 
-    const updateAdminData = {
-        name: payload?.name?.trim() || Admin.name,
-        phone: payload?.phone?.trim() || Admin.phone,
-        role: payload?.role?.trim() || Admin.role,
-        status: payload?.status?.trim() || Admin.status,
-        profileImage: payload?.profileImage?.trim() || Admin.image || null,
-    };
-
-    const MutationUpdateAdmin =
-        'UPDATE "Admins" SET "name" = $1, "phone" = $2, "role" = $3, "status" = $4, "profileImage" = $5 WHERE "id" = $6 RETURNING *';
-    const ValuesUpdateAdmin = [
-        updateAdminData.name,
-        updateAdminData.phone,
-        updateAdminData.role,
-        updateAdminData.status,
-        updateAdminData.profileImage,
-        id,
+    const allowedFields: (keyof IAdmin)[] = [
+        'name',
+        'phone',
+        'role',
+        'status',
+        'profileImage',
     ];
+
+    const setClauses: string[] = [];
+    const ValuesUpdateAdmin: (string | number | boolean | Date)[] = [];
+    let paramIndex = 1;
+
+    for (const key of allowedFields) {
+        const value = payload[key];
+
+        if (value !== undefined && value !== null) {
+            setClauses.push(`"${key}" = $${paramIndex}`);
+            ValuesUpdateAdmin.push(
+                typeof value === 'string' ? value.trim() : value,
+            );
+            paramIndex++;
+        }
+    }
+
+    if (setClauses.length === 0) {
+        throw new AppError(400, 'No valid fields to update');
+    }
+
+    ValuesUpdateAdmin.push(id);
+
+    const MutationUpdateAdmin = `
+        UPDATE "Admins"
+        SET ${setClauses.join(', ')}
+        WHERE "id" = $${paramIndex}
+        RETURNING *
+    `;
+
     const Result = await Query(MutationUpdateAdmin, ValuesUpdateAdmin);
     return Result.rows[0];
 };
 
 const updateAdminSelfIntoDB = async (
-    userPayload: JwtPayload,
+    authPayload: JwtPayload,
     payload: Partial<IAdmin>,
 ) => {
-    const QueryGetAdmin =
-        'SELECT "name", "phone", "role", "status", "profileImage" FROM "Admins" WHERE "id" = $1';
-    const ValuesGetAdmin = [userPayload.id];
+    const QueryGetAdmin = 'SELECT "id" FROM "Admins" WHERE "id" = $1';
+    const ValuesGetAdmin = [authPayload.id];
     const GetAdmin = await Query(QueryGetAdmin, ValuesGetAdmin);
     if (Number(GetAdmin?.rowCount) === 0) {
         throw new AppError(404, 'No admin found');
     }
-    const Admin = GetAdmin.rows[0];
 
-    const updateAdminData = {
-        name: payload?.name?.trim() || Admin.name,
-        phone: payload?.phone?.trim() || Admin.phone,
-        role: payload?.role?.trim() || Admin.role,
-        status: payload?.status?.trim() || Admin.status,
-        profileImage: payload?.profileImage?.trim() || Admin.image || null,
-    };
-
-    const MutationUpdateAdmin =
-        'UPDATE "Admins" SET "name" = $1, "phone" = $2, "role" = $3, "status" = $4, "image" = $5 WHERE "id" = $6 RETURNING *';
-    const ValuesUpdateAdmin = [
-        updateAdminData.name,
-        updateAdminData.phone,
-        updateAdminData.role,
-        updateAdminData.status,
-        updateAdminData.profileImage,
-        userPayload.id,
+    const allowedFields: (keyof IAdmin)[] = [
+        'name',
+        'phone',
+        'role',
+        'status',
+        'profileImage',
     ];
+
+    const setClauses: string[] = [];
+    const ValuesUpdateAdmin: (string | number | boolean | Date)[] = [];
+    let paramIndex = 1;
+
+    for (const key of allowedFields) {
+        const value = payload[key];
+
+        if (value !== undefined && value !== null) {
+            setClauses.push(`"${key}" = $${paramIndex}`);
+            ValuesUpdateAdmin.push(
+                typeof value === 'string' ? value.trim() : value,
+            );
+            paramIndex++;
+        }
+    }
+
+    if (setClauses.length === 0) {
+        throw new AppError(400, 'No valid fields to update');
+    }
+
+    ValuesUpdateAdmin.push(authPayload.id);
+
+    const MutationUpdateAdmin = `
+        UPDATE "Admins"
+        SET ${setClauses.join(', ')}
+        WHERE "id" = $${paramIndex}
+        RETURNING *
+    `;
+
     const Result = await Query(MutationUpdateAdmin, ValuesUpdateAdmin);
     return Result.rows[0];
 };
