@@ -46,8 +46,8 @@ const getTokenByFirebaseToken = async (
 
     const accessToken = await createToken(
         jwtPayload,
-        config.accessSecret as string,
-        Number(config.accessExpiry),
+        config.jwt.secret as string,
+        Number(config.jwt.expiry),
     );
 
     return { accessToken, user: User };

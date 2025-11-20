@@ -21,7 +21,7 @@ const validatePermission = (requiredPermission: TPermission) => {
 
             const decoded = await verifyToken(
                 accessToken,
-                config.accessSecret as string,
+                config.jwt.secret as string,
             );
             const decodedRole = decoded.role;
             if (decodedRole === ROLES.SuperAdmin) {

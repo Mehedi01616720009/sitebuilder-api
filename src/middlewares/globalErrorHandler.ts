@@ -81,11 +81,13 @@ const globalErrorHandler = (
         status = err.status;
         message = err.message;
         errorMessages = [{ path: '', message }];
-        stack = config.nodeEnv === 'development' ? String(err.stack) : null;
+        stack =
+            config.server.nodeEnv === 'development' ? String(err.stack) : null;
     } else if (err instanceof Error) {
         message = err.message;
         errorMessages = [{ path: '', message }];
-        stack = config.nodeEnv === 'development' ? String(err.stack) : null;
+        stack =
+            config.server.nodeEnv === 'development' ? String(err.stack) : null;
     } else {
         errorMessages = [{ path: '', message: 'Unknown error occurred' }];
     }

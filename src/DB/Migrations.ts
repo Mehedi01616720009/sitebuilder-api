@@ -1,15 +1,12 @@
 import { AdminMigrations } from '../modules/admin/admin.model';
-import { CouponMigrations } from '../modules/coupon/coupon.model';
-import { PaymentMigrations } from '../modules/payment/payment.model';
-import { PlanMigrations } from '../modules/plan/plan.model';
-import { PurchaseMigrations } from '../modules/purchase/purchase.model';
-import { UserMigrations } from '../modules/user/user.model';
+import { RoleMigrations } from '../modules/role/role.model';
 
 export const Migrations = [
+    ...RoleMigrations,
     ...AdminMigrations,
-    ...UserMigrations,
-    ...PlanMigrations,
-    ...CouponMigrations,
-    ...PurchaseMigrations,
-    ...PaymentMigrations,
+    // ...UserMigrations,
+    // ...PlanMigrations,
+    // ...CouponMigrations,
+    // ...PurchaseMigrations,
+    // ...PaymentMigrations,
 ];

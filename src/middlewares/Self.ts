@@ -18,7 +18,7 @@ const Self = () => {
             // token verify
             jwt.verify(
                 accessToken as string,
-                config.accessSecret as string,
+                config.jwt.secret as string,
                 function (err, decoded) {
                     if (err) {
                         throw new AppError(401, 'You are not authorized');

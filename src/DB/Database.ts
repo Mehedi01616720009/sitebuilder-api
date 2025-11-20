@@ -3,12 +3,12 @@ import config from '../config';
 import { Migrations } from './Migrations';
 
 const pool = new Pool({
-    host: config.dbHost,
-    port: parseInt(config.dbPort as string),
-    database: config.dbName,
-    user: config.dbUser,
-    password: config.dbPass,
-    max: 20,
+    host: config.database.host,
+    port: parseInt(config.database.port as string),
+    database: config.database.dbName,
+    user: config.database.user,
+    password: config.database.pass,
+    max: parseInt(config.database.maxConnection as string),
     idleTimeoutMillis: 30000,
     connectionTimeoutMillis: 2000,
 });

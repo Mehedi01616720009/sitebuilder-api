@@ -17,8 +17,20 @@ async function main() {
         await SeedSuperAdmin();
 
         // server initial port listener
-        server = app.listen(config.port, () => {
-            console.log({ message: `Server is listening on ${config.port}` });
+        server = app.listen(config.server.port, () => {
+            console.log(`
+            -----------------------------------------------------
+            🚀 Server Started Successfully
+            -----------------------------------------------------
+            🧩 Service       : ${config.server.appName}
+            🌐 Environment    : ${config.server.nodeEnv}
+            🏷️ Version       : ${config.server.version}
+            📡 Port          : ${config.server.port}
+            🔗 Base URL      : ${config.server.baseURL}
+            🗄️ Database      : Connected
+            ⏰ Started At    : ${new Date().toISOString()}
+            -----------------------------------------------------
+            `);
         });
     } catch (err: unknown) {
         if (err instanceof Error) {

@@ -15,7 +15,7 @@ const getAccessToken = catchAsync(async (req, res) => {
 
     const { accessToken, user } = result;
     res.cookie('token', `Bearer ${accessToken}`, {
-        secure: config.nodeEnv === 'production',
+        secure: config.server.nodeEnv === 'production',
         httpOnly: true,
     });
 
